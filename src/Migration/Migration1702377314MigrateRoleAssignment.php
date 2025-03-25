@@ -40,19 +40,6 @@ SQL)->fetchAllAssociative();
         }
     }
 
-    public function updateDestructive(Connection $connection): void
-    {
-        $connection->executeStatement(<<<'SQL'
-            ALTER TABLE `heptacom_admin_open_auth_client`
-                DROP COLUMN `user_become_admin`,
-                DROP COLUMN `keep_user_updated`;
-SQL);
-
-        $connection->executeStatement(<<<'SQL'
-            DROP TABLE IF EXISTS `heptacom_admin_open_auth_client_role`;
-SQL);
-    }
-
     private function migrateClient(array $client, Connection $connection): void
     {
         $inserts = [
