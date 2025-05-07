@@ -70,19 +70,31 @@ final class ClientRedirectRoute extends AbstractController
                 $client->provider,
                 $client->config,
                 $this->redirectBehaviourFactory->createRedirectBehaviour($clientId, $context),
-                $client->rules
+                $client->rules,
+                $context
             );
-        $requestState = (string) $user->getExtensionOfType('requestState', ArrayStruct::class)['requestState'];
+
+        /** @var ArrayStruct|null $requestStateExtension */
+        $requestStateExtension = $user->getExtensionOfType('requestState', ArrayStruct::class);
+        $requestState = $requestStateExtension?->offsetGet('requestState');
+        $salesChannelId = $requestStateExtension?->offsetGet('salesChannelId');
 
         $this->flow->upsertUser($user, $clientId, $requestState, $context);
 
         $statePayload = $this->stateResolver->getPayload($requestState, $context);
 
-        $targetUrl = $statePayload['redirectTo'] ?? $this->generateUrl(
-            'administration.index',
-            [],
-            UrlGeneratorInterface::ABSOLUTE_URL
-        );
+        $targetUrl = $statePayload['redirectTo'] ??
+            $salesChannelId
+            ? $this->generateUrl(
+                'frontend.home.page',
+                [],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            )
+            : $this->generateUrl(
+                'administration.index',
+                [],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            );
         $targetUrl = $this->enrichRedirectUrl($targetUrl, $requestState);
 
         // redirect with "303 See Other" to ensure the request method becomes GET

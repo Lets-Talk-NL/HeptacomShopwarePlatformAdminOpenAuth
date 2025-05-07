@@ -12,6 +12,7 @@ class UserRedirectReceivedEvent
 {
     public function __construct(
         public readonly User $user,
+        public readonly string $client,
         public readonly RequestInterface $request,
         public readonly RedirectBehaviour $behaviour
     ) {

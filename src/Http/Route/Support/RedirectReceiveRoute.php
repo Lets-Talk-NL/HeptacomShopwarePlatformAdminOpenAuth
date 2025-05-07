@@ -13,18 +13,30 @@ use Heptacom\AdminOpenAuth\Contract\Route\Exception\RedirectReceiveException;
 use Heptacom\AdminOpenAuth\Contract\Route\Exception\RedirectReceiveMissingStateException;
 use Heptacom\AdminOpenAuth\Contract\User;
 use Heptacom\AdminOpenAuth\Database\ClientRuleCollection;
+use Heptacom\AdminOpenAuth\Database\LoginCollection;
+use Heptacom\AdminOpenAuth\Database\LoginDefinition;
+use Heptacom\AdminOpenAuth\Database\LoginEntity;
 use Heptacom\AdminOpenAuth\Service\ClientRuleValidator;
 use Psr\Http\Message\RequestInterface;
 use Psr\Log\LoggerInterface;
 use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class RedirectReceiveRoute
 {
+    /**
+     * @param EntityRepository<LoginCollection> $loginRepository
+     */
     public function __construct(
         private readonly ClientFactoryContract $clientFactory,
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly ClientRuleValidator $clientRuleValidator,
+        #[Autowire(service: LoginDefinition::ENTITY_NAME . '.repository')]
+        private readonly EntityRepository $loginRepository,
         private readonly LoggerInterface $logger,
     ) {
     }
@@ -38,6 +50,7 @@ class RedirectReceiveRoute
         array $configuration,
         RedirectBehaviour $behaviour,
         ClientRuleCollection $rules,
+        Context $context
     ): User {
         \parse_str($request->getUri()->getQuery(), $getParams);
 
@@ -55,15 +68,21 @@ class RedirectReceiveRoute
             throw new RedirectReceiveMissingStateException($params, $behaviour->stateKey);
         }
 
+        $loginCriteria = new Criteria();
+        $loginCriteria->addFilter(new EqualsFilter('state', $state));
+        /** @var LoginEntity $login */
+        $login = $this->loginRepository->search($loginCriteria, $context)->first();
+
         $client = $this->clientFactory->create($providerKey, $configuration);
         $user = $client->getUser($state, $code, $behaviour);
         $user->addArrayExtension('requestState', [
             'requestState' => $state,
+            'salesChannelId' => $login->salesChannelId,
         ]);
 
         $this->discoverRoleAssignment($rules, $user, $client, $configuration);
 
-        $this->eventDispatcher->dispatch(new UserRedirectReceivedEvent($user, $request, $behaviour));
+        $this->eventDispatcher->dispatch(new UserRedirectReceivedEvent($user, $login->clientId, $request, $behaviour));
 
         return $user;
     }
