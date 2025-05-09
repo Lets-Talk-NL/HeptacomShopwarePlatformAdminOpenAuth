@@ -8,6 +8,7 @@ use Heptacom\AdminOpenAuth\Contract\OpenAuthenticationFlowInterface;
 use Heptacom\AdminOpenAuth\Contract\RedirectBehaviourFactoryInterface;
 use Heptacom\AdminOpenAuth\Database\ClientCollection;
 use Heptacom\AdminOpenAuth\Database\ClientEntity;
+use Heptacom\AdminOpenAuth\Http\Route\Support\BeforeUserRedirectEvent;
 use Heptacom\AdminOpenAuth\Http\Route\Support\RedirectReceiveRoute;
 use Heptacom\AdminOpenAuth\Service\StateResolver;
 use Nyholm\Psr7\Factory\Psr17Factory;
@@ -24,6 +25,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 final class ClientRedirectRoute extends AbstractController
 {
@@ -36,6 +38,7 @@ final class ClientRedirectRoute extends AbstractController
         private readonly RedirectReceiveRoute $redirectReceiveRoute,
         private readonly RedirectBehaviourFactoryInterface $redirectBehaviourFactory,
         private readonly StateResolver $stateResolver,
+        private readonly EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -79,7 +82,7 @@ final class ClientRedirectRoute extends AbstractController
         $requestState = $requestStateExtension?->offsetGet('requestState');
         $salesChannelId = $requestStateExtension?->offsetGet('salesChannelId');
 
-        $this->flow->upsertUser($user, $clientId, $requestState, $context);
+        $userId = $this->flow->upsertUser($user, $clientId, $requestState, $context);
 
         $statePayload = $this->stateResolver->getPayload($requestState, $context);
 
@@ -96,6 +99,8 @@ final class ClientRedirectRoute extends AbstractController
                 UrlGeneratorInterface::ABSOLUTE_URL
             );
         $targetUrl = $this->enrichRedirectUrl($targetUrl, $requestState);
+
+        $this->eventDispatcher->dispatch(new BeforeUserRedirectEvent($userId, $user, $clientId, $statePayload));
 
         // redirect with "303 See Other" to ensure the request method becomes GET
         return new RedirectResponse($targetUrl, Response::HTTP_SEE_OTHER);
