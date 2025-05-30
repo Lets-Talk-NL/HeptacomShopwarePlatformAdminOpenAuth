@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Heptacom\AdminOpenAuth\Contract;
+namespace Heptacom\AdminOpenAuth\Contract\Client;
+
+use Heptacom\AdminOpenAuth\Contract\RedirectBehaviour;
 
 /**
  * If implemented, the client is allowed to modify the created RedirectBehaviour.

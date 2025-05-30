@@ -22,6 +22,9 @@ services:
         Heptacom\AdminOpenAuth\Contract\RuleContract:
             tags:
                 - { name: 'shopware.rule.definition' }
+        Heptacom\AdminOpenAuth\Service\HttpClient\Middleware\HttpClientMiddlewareInterface:
+            tags:
+                - 'heptacom_open_auth.http_client.middleware'
         Shopware\Core\Framework\DataAbstractionLayer\EntityDefinition:
             tags:
                 - 'shopware.entity.definition'
@@ -47,6 +50,14 @@ services:
             - '../../Exception/*'
             - '../../Migration/*'
             - '../../Resources/*'
+            - '../../Service/HttpClient/Middleware/AuthenticationMiddleware.php'
+
+    heptacom.admin_open_auth.base_http_client:
+        class: 'GuzzleHttp\Client'
+        arguments:
+            - protocols: [https]
+              verify: true
+              timeout: 15
 
     heptacom.admin_open_auth.oidc.http_client:
         class: 'GuzzleHttp\Client'
@@ -85,6 +96,11 @@ services:
         arguments:
             - '@Heptacom\AdminOpenAuth\Contract\Client\ClientFactoryContract'
             - '@event_dispatcher'
+
+    Heptacom\AdminOpenAuth\Service\HttpClient\AuthorizedHttpClientFactory:
+        arguments:
+            $httpClient: '@heptacom.admin_open_auth.base_http_client'
+            $middlewares: !tagged_iterator heptacom_open_auth.http_client.middleware
 
     Heptacom\AdminOpenAuth\Service\OpenAuth\OneTimeTokenClientRepository:
         decorates: Shopware\Core\Framework\Api\OAuth\ClientRepository

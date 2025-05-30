@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Heptacom\AdminOpenAuth\Contract;
+namespace Heptacom\AdminOpenAuth\Contract\Client;
 
 /**
  * If implemented, the client can provide metadata which are made publicly available.

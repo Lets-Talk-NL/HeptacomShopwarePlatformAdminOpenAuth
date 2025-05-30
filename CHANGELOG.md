@@ -1,5 +1,9 @@
 # Unreleased
 
+**Added**
+
+* Added `AuthorizedHttpClientFactory` for creating authorized, PSR-18 compatible HTTP clients using the user's access token or the configured client credentials
+
 # 8.0.0
 
 **Added**

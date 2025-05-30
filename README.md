@@ -27,7 +27,8 @@ This Shopware 6 plugin allows to add "Login with" functionality into the Shopwar
   * easy setup using the provider's metadata xml
 * promote users automatically to administrators
 * set roles and permissions based on rules
-* disable the password login and automatically redirect users to the identity provider 
+* disable the password login and automatically redirect users to the identity provider
+* use pre-authorized HTTP clients for further API requests
 
 ## Security
 
@@ -266,6 +267,99 @@ class CustomRuleAction implements RuleActionInterface
     }
 }
 ```
+
+## Using the pre-authorized HTTP client
+
+In some scenarios, you might want to use the credentials provided by your client for further API requests.
+
+The plugin provides a factory to create a PSR-18 compatible HTTP client, handling the authorization for you.
+
+Depending on your needs, you can either use the user's access token or the client credentials.
+
+### Using the client credentials
+
+In case you use a client implementing the [`StandaloneClientContract`](src/Contract/Client/StandaloneClientContract.php) you'll be able to make requests using the client credentials you already configured.
+
+```php
+<?php
+
+use Heptacom\AdminOpenAuth\Service\HttpClient\AuthorizedHttpClientFactory;
+use Psr\Http\Client\ClientInterface;
+use Shopware\Core\Framework\Context;
+use Shopware\Core\System\SystemConfig\SystemConfigService;
+
+class MyService {
+    public function __construct(
+        private readonly AuthorizedHttpClientFactory $httpClientFactory,
+        private readonly SystemConfigService $systemConfigService,
+    ) {
+    }
+
+    // ...
+
+    private function getHttpClient(): ClientInterface
+    {
+        // Get the ID of the SSO client you want to use.
+        // For now, we assume you stored it in the plugin configuration.
+        $clientId = $this->systemConfigService->getString('MyPlugin.config.clientId');
+        
+        // Create a pre-authorized HTTP client.
+        return $this->httpClientFactory->forClient(
+            $clientId,
+            Context::createFromDefaults(),
+            ['my_scope']
+        );
+    }
+}
+```
+
+### Using the user's access token
+
+In case you are using a client implementing the [`RequestAuthorizationContract`](src/Contract/Client/RequestAuthorizationContract.php) you can also use the user's access token.
+
+Please keep in mind that the client must be configured to allow storing the user's token.
+
+```php
+<?php
+
+use Heptacom\AdminOpenAuth\Service\HttpClient\AuthorizedHttpClientFactory;
+use Psr\Http\Client\ClientInterface;
+use Shopware\Core\Framework\Context;
+use Shopware\Core\System\SystemConfig\SystemConfigService;
+
+class MyService {
+    public function __construct(
+        private readonly AuthorizedHttpClientFactory $httpClientFactory,
+        private readonly SystemConfigService $systemConfigService,
+    ) {
+    }
+
+    // ...
+
+    private function getHttpClient(string $userId): ClientInterface
+    {
+        // Get the ID of the SSO client you want to use.
+        // For now, we assume you stored it in the plugin configuration.
+        $clientId = $this->systemConfigService->getString('MyPlugin.config.clientId');
+        
+        // Create a pre-authorized HTTP client.
+        return $this->httpClientFactory->forUser(
+            $clientId,
+            $userId,
+            Context::createFromDefaults(),
+        );
+    }
+}
+```
+
+## Storefront login
+
+You want to use this plugin to allow your customers to login using SSO?
+
+We are happy to provide you an extension to this plugin, allowing you exactly that.
+It is based on this plugin, providing you the same extensibility and features as this plugin.
+
+For more information, please have a look at our website: [www.heptacom.de/en/products](https://www.heptacom.de/products/).
 
 ## Changes
 
