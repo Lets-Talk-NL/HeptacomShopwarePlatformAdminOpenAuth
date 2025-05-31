@@ -8,11 +8,15 @@ use Heptacom\AdminOpenAuth\Contract\Client\ClientContract;
 use Heptacom\AdminOpenAuth\Contract\Client\RequestAuthorizationContract;
 use Heptacom\AdminOpenAuth\Contract\Client\StandaloneClientContract;
 use Heptacom\AdminOpenAuth\Contract\ClientLoaderInterface;
+use Heptacom\AdminOpenAuth\Contract\TokenPair;
 use Heptacom\AdminOpenAuth\Contract\UserTokenInterface;
 use Heptacom\AdminOpenAuth\Exception\ClientFeatureNotSupportedException;
 use Heptacom\AdminOpenAuth\Exception\LoadClientException;
 use Heptacom\AdminOpenAuth\Service\HttpClient\Middleware\AuthorizationMiddleware;
+use Heptacom\AdminOpenAuth\Service\HttpClient\Middleware\ClientAuthorizationMiddleware;
 use Heptacom\AdminOpenAuth\Service\HttpClient\Middleware\HttpClientMiddlewareInterface;
+use Heptacom\AdminOpenAuth\Service\HttpClient\Middleware\TokenAuthorizationMiddleware;
+use Heptacom\AdminOpenAuth\Service\HttpClient\Middleware\UserAuthorizationMiddleware;
 use Psr\Http\Client\ClientInterface;
 use Shopware\Core\Framework\Context;
 
@@ -54,11 +58,13 @@ final class AuthorizedHttpClientFactory
     {
         $client = $this->loadClient($clientId, StandaloneClientContract::class, $context);
 
+        $middleware = new ClientAuthorizationMiddleware($client, $scopes);
+
+        \sort($scopes);
+
         return $this->getHttpClient(
-            $clientId,
-            $client,
-            $context,
-            scopes: $scopes,
+            $this->getHttpClientIdentifier('client', $clientId, ['scopes' => $scopes]),
+            $middleware,
         );
     }
 
@@ -70,11 +76,28 @@ final class AuthorizedHttpClientFactory
     {
         $client = $this->loadClient($clientId, RequestAuthorizationContract::class, $context);
 
+        $middleware = new UserAuthorizationMiddleware($clientId, $client, $userId, $this->userToken, $context);
+
         return $this->getHttpClient(
-            $clientId,
-            $client,
-            $context,
-            userId: $userId,
+            $this->getHttpClientIdentifier('user', $clientId, ['userId' => $userId]),
+            $middleware,
+        );
+    }
+
+    /**
+     * Creates a client authenticated with a specific token.
+     * @throws LoadClientException|ClientFeatureNotSupportedException
+     * @internal
+     */
+    public function forToken(string $clientId, TokenPair $token, Context $context): ClientInterface
+    {
+        $client = $this->loadClient($clientId, RequestAuthorizationContract::class, $context);
+
+        $middleware = new TokenAuthorizationMiddleware($client, $token);
+
+        return $this->getHttpClient(
+            $this->getHttpClientIdentifier('token', $clientId, ['token' => $token]),
+            $middleware,
         );
     }
 
@@ -94,58 +117,31 @@ final class AuthorizedHttpClientFactory
         return $client;
     }
 
-    /**
-     * @param string[]|null $scopes
-     */
     private function getHttpClient(
-        string $clientId,
-        ClientContract $client,
-        Context $context,
-        ?string $userId = null,
-        ?array $scopes = null,
+        string $httpClientIdentifier,
+        HttpClientMiddlewareInterface $authorizationMiddleware,
     ): AuthorizedHttpClient
     {
-        $cacheKey = $clientId;
-
-        if ($userId !== null) {
-            $cacheKey .= '_' . $userId;
-        }
-
-        if ($scopes !== null && $scopes !== []) {
-            $cacheKeyScopes = $scopes;
-            \sort($cacheKeyScopes);
-            $cacheKey .= '_' . sha1(implode(' ', $cacheKeyScopes));
-        }
-
-        $this->httpClients[$cacheKey] ??= new AuthorizedHttpClient(
+        $this->httpClients[$httpClientIdentifier] ??= new AuthorizedHttpClient(
             $this->httpClient,
             [
                 ...$this->middlewares,
-                $this->getAuthorizationMiddleware($clientId, $client, $userId, $scopes, $context)
+                $authorizationMiddleware
             ]
         );
 
-        return $this->httpClients[$cacheKey];
+        return $this->httpClients[$httpClientIdentifier];
     }
 
-    /**
-     * @param string[]|null $scopes
-     */
-    private function getAuthorizationMiddleware(
-        string $clientId,
-        ClientContract $client,
-        ?string $userId,
-        ?array $scopes,
-        Context $context,
-    ): HttpClientMiddlewareInterface
+    private function getHttpClientIdentifier(string $type, string $clientId, array $additionalContext = []): string
     {
-        return new AuthorizationMiddleware(
+        $contextHash = \sha1(\json_encode($additionalContext));
+
+        return \sprintf(
+            '%s_%s_%s',
+            $type,
             $clientId,
-            $client,
-            $this->userToken,
-            $context,
-            $userId,
-            $scopes
+            $contextHash,
         );
     }
 }
