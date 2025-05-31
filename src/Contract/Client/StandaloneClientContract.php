@@ -15,7 +15,6 @@ interface StandaloneClientContract extends RequestAuthorizationContract
      * Obtain a token pair for the client using the configured client credentials.
      *
      * @param string[]|null $scopes The requested scopes for the token. If null, the default scopes will be used.
-     * @return TokenPair
      */
     public function getClientToken(?array $scopes = null): TokenPair;
 }

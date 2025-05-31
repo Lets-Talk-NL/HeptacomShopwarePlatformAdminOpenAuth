@@ -58,7 +58,6 @@ class OAuthRuleScope extends RuleScope
 
     /**
      * A authorized HTTP client for the user.
-     * @return ClientInterface|null
      */
     public function getHttpClient(): ?ClientInterface
     {

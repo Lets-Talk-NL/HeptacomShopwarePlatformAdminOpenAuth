@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace Heptacom\AdminOpenAuth\Service\HttpClient\Middleware;
 
 use Heptacom\AdminOpenAuth\Contract\Client\ClientContract;
-use Heptacom\AdminOpenAuth\Contract\Client\RefreshTokenContract;
 use Heptacom\AdminOpenAuth\Contract\TokenPair;
 use Heptacom\AdminOpenAuth\Contract\UserTokenInterface;
 use Heptacom\AdminOpenAuth\Database\UserTokenEntity;
-use Heptacom\AdminOpenAuth\Exception\ClientFeatureNotSupportedException;
 use Shopware\Core\Framework\Context;
 
 final class UserAuthorizationMiddleware extends AuthorizationMiddleware

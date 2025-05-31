@@ -13,7 +13,6 @@ abstract class ClientContract extends Struct
 {
     abstract public function getLoginUrl(?string $state, RedirectBehaviour $behaviour): string;
 
-
     abstract public function getUser(string $state, string $code, RedirectBehaviour $behaviour): User;
 
     public function prepareOAuthRuleScope(OAuthRuleScope $scope): void

@@ -18,6 +18,7 @@ final readonly class RequestLoggerMiddleware implements HttpClientMiddlewareInte
      * As value, you can use any valid log level. Set to "false" to disable logging for the request.
      *
      * The header is removed after processing.
+     *
      * @see LogLevel
      */
     public const HEADER_LOGGING_ENABLED = 'X-Request-Logging-Enabled';

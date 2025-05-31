@@ -50,8 +50,9 @@ final class AuthorizedHttpClientFactory
     /**
      * Creates a client dedicated for machine-to-machine communication.
      * The credentials will be fetched from the configured client.
+     *
      * @param string[]|null $scopes Scopes to be requested for the client. If null, the configured scopes of the client will be used.
-     * @return ClientInterface
+     *
      * @throws LoadClientException|ClientFeatureNotSupportedException
      */
     public function forClient(string $clientId, Context $context, ?array $scopes = null): ClientInterface
@@ -70,6 +71,7 @@ final class AuthorizedHttpClientFactory
 
     /**
      * Creates a client authenticated for a specific user.
+     *
      * @throws LoadClientException|ClientFeatureNotSupportedException
      */
     public function forUser(string $clientId, string $userId, Context $context): ClientInterface
@@ -86,20 +88,17 @@ final class AuthorizedHttpClientFactory
 
     /**
      * Creates a client authenticated with a specific token.
+     *
      * @throws ClientFeatureNotSupportedException
+     *
      * @internal
      */
     public function forToken(
         TokenPair $token,
         ClientContract $client,
-    ): ClientInterface
-    {
+    ): ClientInterface {
         if (!$client instanceof RequestAuthorizationContract) {
-            throw new ClientFeatureNotSupportedException(
-                $client::class,
-                RequestAuthorizationContract::class,
-                1748652077
-            );
+            throw new ClientFeatureNotSupportedException($client::class, RequestAuthorizationContract::class, 1748652077);
         }
 
         $middleware = new TokenAuthorizationMiddleware($client, $token);
@@ -111,8 +110,8 @@ final class AuthorizedHttpClientFactory
     }
 
     /**
-     * @param string $clientId
      * @param class-string $feature
+     *
      * @throws LoadClientException|ClientFeatureNotSupportedException
      */
     private function loadClient(string $clientId, string $feature, Context $context): ClientContract
@@ -129,13 +128,12 @@ final class AuthorizedHttpClientFactory
     private function getHttpClient(
         string $httpClientIdentifier,
         HttpClientMiddlewareInterface $authorizationMiddleware,
-    ): AuthorizedHttpClient
-    {
+    ): AuthorizedHttpClient {
         $this->httpClients[$httpClientIdentifier] ??= new AuthorizedHttpClient(
             $this->httpClient,
             [
                 ...$this->middlewares,
-                $authorizationMiddleware
+                $authorizationMiddleware,
             ]
         );
 

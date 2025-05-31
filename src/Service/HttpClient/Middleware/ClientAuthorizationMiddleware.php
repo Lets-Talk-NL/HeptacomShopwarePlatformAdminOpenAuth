@@ -21,11 +21,7 @@ final class ClientAuthorizationMiddleware extends AuthorizationMiddleware
     protected function getToken(): ?TokenPair
     {
         if (!$this->client instanceof StandaloneClientContract) {
-            throw new ClientFeatureNotSupportedException(
-                $this->client::class,
-                StandaloneClientContract::class,
-                1748642863
-            );
+            throw new ClientFeatureNotSupportedException($this->client::class, StandaloneClientContract::class, 1748642863);
         }
 
         // todo: implement caching

@@ -17,7 +17,7 @@ class ClientFeatureNotSupportedException extends \Exception
     ) {
         parent::__construct(
             \sprintf(
-            'The client "%s" does not support "%s"',
+                'The client "%s" does not support "%s"',
                 $clientType,
                 $feature,
             ),
