@@ -57,7 +57,7 @@ services:
         arguments:
             - protocols: [https]
               verify: true
-              timeout: 15
+              timeout: 5
 
     heptacom.admin_open_auth.oidc.http_client:
         class: 'GuzzleHttp\Client'

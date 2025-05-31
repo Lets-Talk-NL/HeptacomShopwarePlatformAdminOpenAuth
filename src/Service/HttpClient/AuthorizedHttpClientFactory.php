@@ -86,17 +86,26 @@ final class AuthorizedHttpClientFactory
 
     /**
      * Creates a client authenticated with a specific token.
-     * @throws LoadClientException|ClientFeatureNotSupportedException
+     * @throws ClientFeatureNotSupportedException
      * @internal
      */
-    public function forToken(string $clientId, TokenPair $token, Context $context): ClientInterface
+    public function forToken(
+        TokenPair $token,
+        ClientContract $client,
+    ): ClientInterface
     {
-        $client = $this->loadClient($clientId, RequestAuthorizationContract::class, $context);
+        if (!$client instanceof RequestAuthorizationContract) {
+            throw new ClientFeatureNotSupportedException(
+                $client::class,
+                RequestAuthorizationContract::class,
+                1748652077
+            );
+        }
 
         $middleware = new TokenAuthorizationMiddleware($client, $token);
 
         return $this->getHttpClient(
-            $this->getHttpClientIdentifier('token', $clientId, ['token' => $token]),
+            $this->getHttpClientIdentifier('token', $client->getApiAlias(), ['token' => $token]),
             $middleware,
         );
     }

@@ -9,7 +9,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * @private
+ * @internal Please note that this interface can be used for extending the plugin. However, do not consider it as public API. It might change in future versions without notice.
  */
 interface HttpClientMiddlewareInterface
 {

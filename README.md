@@ -89,6 +89,7 @@ Accept: application/json
 ```
 
 The request must be encrypted (HTTPS) and will timeout after 5 seconds. In case of a timeout or a none successful response code, the condition will be evaluated as `false`.
+You can change these settings by defining your own HTTP client (see [Using a different HTTP client](#use-a-different-http-client)).
 
 In case you have multiple conditions, depending on the same endpoint, the request will only be done once.
 The response is cached in memory for the duration of the rule evaluation.
@@ -351,6 +352,16 @@ class MyService {
     }
 }
 ```
+
+### Use a different HTTP client
+
+The authorized HTTP client uses a PSR-18 compatible client like Guzzle under the hood.
+
+By default, HTTPS usage and certificate validation is enforced.
+
+In case you want to use different settings, you can decorate the `heptacom.admin_open_auth.base_http_client` service to provide your own client.
+
+Please note that some settings of your HTTP client (like adding default headers) could lead to unwanted side effects, as the authorized HTTP client is used by this plugin as well.
 
 ## Storefront login
 
