@@ -18,7 +18,7 @@ final class OpenIdConnectClient extends ClientContract implements StandaloneClie
 {
     public function __construct(
         private readonly TokenPairFactoryContract $tokenPairFactory,
-        private readonly OpenIdConnectService $openIdConnectService, private readonly TokenPair $tokenPair
+        private readonly OpenIdConnectService $openIdConnectService,
     ) {
     }
 

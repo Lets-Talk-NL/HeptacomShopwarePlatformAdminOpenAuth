@@ -51,7 +51,7 @@ services:
             - '../../Exception/*'
             - '../../Migration/*'
             - '../../Resources/*'
-            - '../../Service/HttpClient/Middleware/*AuthenticationMiddleware.php'
+            - '../../Service/HttpClient/Middleware/*AuthorizationMiddleware.php'
 
     heptacom.admin_open_auth.base_http_client:
         class: 'GuzzleHttp\Client'
