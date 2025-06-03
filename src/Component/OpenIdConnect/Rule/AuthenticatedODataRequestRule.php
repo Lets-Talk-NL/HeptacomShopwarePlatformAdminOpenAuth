@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Heptacom\AdminOpenAuth\Component\OpenIdConnect\Rule;
 
-use Heptacom\AdminOpenAuth\Component\Provider\OpenIdConnectClient;
 use Heptacom\AdminOpenAuth\Contract\OAuthRuleScope;
 use Heptacom\AdminOpenAuth\Contract\User;
 use Psr\Http\Client\ClientInterface;
