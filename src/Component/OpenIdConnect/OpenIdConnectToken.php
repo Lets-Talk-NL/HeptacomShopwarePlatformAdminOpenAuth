@@ -8,6 +8,12 @@ use Jose\Component\Signature\Serializer\CompactSerializer;
 use Jose\Component\Signature\Serializer\JWSSerializerManager;
 use Shopware\Core\Framework\Struct\Struct;
 
+/**
+ * Holds the token data returned by the OpenID Connect provider.
+ *
+ * As some providers return additional data in the token response, the creation of dynamic properties is allowed.
+ */
+#[\AllowDynamicProperties]
 final class OpenIdConnectToken extends Struct
 {
     protected ?string $access_token = null;

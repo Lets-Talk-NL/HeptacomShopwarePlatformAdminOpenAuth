@@ -1,5 +1,9 @@
 # Unreleased
 
+**Fixed**
+
+* Fixed OIDC provider to not emit dynamic property warnings
+
 # 8.0.0
 
 **Added**

@@ -6,6 +6,12 @@ namespace Heptacom\AdminOpenAuth\Component\OpenIdConnect;
 
 use Shopware\Core\Framework\Struct\Struct;
 
+/**
+ * Holds the data returned by the OpenID Connect metadata discovery.
+ *
+ * As some providers return additional data, the creation of dynamic properties is allowed.
+ */
+#[\AllowDynamicProperties]
 final class OpenIdConnectConfiguration extends Struct
 {
     protected bool $wellKnownDiscovered = false;
