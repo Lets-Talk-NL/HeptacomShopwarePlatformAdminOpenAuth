@@ -19,6 +19,7 @@ use Heptacom\AdminOpenAuth\Service\HttpClient\Middleware\TokenAuthorizationMiddl
 use Heptacom\AdminOpenAuth\Service\HttpClient\Middleware\UserAuthorizationMiddleware;
 use Psr\Http\Client\ClientInterface;
 use Shopware\Core\Framework\Context;
+use Symfony\Contracts\Cache\CacheInterface;
 
 final class AuthorizedHttpClientFactory
 {
@@ -39,6 +40,7 @@ final class AuthorizedHttpClientFactory
         private readonly ClientLoaderInterface $clientLoader,
         private readonly UserTokenInterface $userToken,
         private readonly ClientInterface $httpClient,
+        private readonly CacheInterface $cache,
         iterable $middlewares,
     ) {
         $this->middlewares = \array_filter(
@@ -59,7 +61,7 @@ final class AuthorizedHttpClientFactory
     {
         $client = $this->loadClient($clientId, StandaloneClientContract::class, $context);
 
-        $middleware = new ClientAuthorizationMiddleware($client, $scopes);
+        $middleware = new ClientAuthorizationMiddleware($client, $clientId, $scopes, $this->cache);
 
         \sort($scopes);
 
