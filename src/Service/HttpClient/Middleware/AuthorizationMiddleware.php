@@ -24,7 +24,7 @@ abstract class AuthorizationMiddleware implements HttpClientMiddlewareInterface
         $token = $this->getToken();
 
         if (!$token instanceof TokenPair) {
-            throw new \Exception(); // todo: custom exception
+            throw new \Exception('token does not exist'); // todo: custom exception
         }
 
         if ($this->needsRefresh($token)) {
