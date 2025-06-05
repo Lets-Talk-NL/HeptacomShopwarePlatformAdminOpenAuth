@@ -78,7 +78,7 @@ final class AuthorizedHttpClientFactory
     {
         $client = $this->loadClient($clientId, RequestAuthorizationContract::class, $context);
 
-        $middleware = new UserAuthorizationMiddleware($clientId, $client, $userId, $this->userToken, $context);
+        $middleware = new UserAuthorizationMiddleware($client, $clientId, $userId, $this->userToken, $context);
 
         return $this->getHttpClient(
             $this->getHttpClientIdentifier('user', $clientId, ['userId' => $userId]),

@@ -13,8 +13,8 @@ use Shopware\Core\Framework\Context;
 final class UserAuthorizationMiddleware extends AuthorizationMiddleware
 {
     public function __construct(
+        ClientContract $client,
         protected readonly string $clientId,
-        protected readonly ClientContract $client,
         protected readonly string $userId,
         protected readonly UserTokenInterface $userToken,
         protected readonly Context $context,
@@ -24,7 +24,7 @@ final class UserAuthorizationMiddleware extends AuthorizationMiddleware
 
     protected function getToken(): ?TokenPair
     {
-        $userToken = $this->userToken->getToken($this->userId, $this->clientId, $this->context);
+        $userToken = $this->userToken->getToken($this->clientId, $this->userId, $this->context);
 
         if (!$userToken instanceof UserTokenEntity) {
             return null;
