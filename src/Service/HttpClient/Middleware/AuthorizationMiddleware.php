@@ -34,6 +34,7 @@ abstract class AuthorizationMiddleware implements HttpClientMiddlewareInterface
 
             if ($this->client instanceof RefreshTokenContract) {
                 $token = $this->client->refreshToken($token->refreshToken);
+                $this->storeRefreshedToken($token);
             } else {
                 // todo: check if to use a different exception
                 throw new ClientFeatureNotSupportedException($this->client::class, RefreshTokenContract::class, 1748643468);
