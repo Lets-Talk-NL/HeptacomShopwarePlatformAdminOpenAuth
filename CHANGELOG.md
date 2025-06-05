@@ -4,6 +4,10 @@
 
 * Added `AuthorizedHttpClientFactory` for creating authorized, PSR-18 compatible HTTP clients using the user's access token or the configured client credentials
 
+**Fixed**
+
+* Store user tokens only if an access token exists. Prior the refresh token was required.
+
 # 8.0.0
 
 **Added**
