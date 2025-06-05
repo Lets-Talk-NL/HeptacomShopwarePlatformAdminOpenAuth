@@ -8,7 +8,6 @@ use Heptacom\AdminOpenAuth\Contract\Client\ClientContract;
 use Heptacom\AdminOpenAuth\Contract\Client\StandaloneClientContract;
 use Heptacom\AdminOpenAuth\Contract\TokenPair;
 use Heptacom\AdminOpenAuth\Exception\ClientFeatureNotSupportedException;
-use Psr\Cache\CacheItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
@@ -32,6 +31,7 @@ final class ClientAuthorizationMiddleware extends AuthorizationMiddleware
         }
 
         $cacheKey = $this->buildCacheKey();
+
         return $this->cache->get($cacheKey, fn (ItemInterface $cacheItem) => $this->cacheToken($cacheItem));
     }
 
