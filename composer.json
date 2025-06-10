@@ -3,7 +3,7 @@
     "description": "Shopware plugin to allow OAuth providers to provide admin logins",
     "license": "Apache-2.0",
     "type": "shopware-platform-plugin",
-    "version": "7.1.4",
+    "version": "7.1.5",
     "keywords": [
         "ecommerce",
         "shopware",
@@ -63,7 +63,11 @@
         "web-token/jwt-signature-algorithm-rsa": "^3.2"
     },
     "require-dev": {
-        "shopware/administration": "~6.6.0"
+        "shopware/administration": "~6.6.0",
+        "sentry/sentry": "^4.12"
+    },
+    "suggest": {
+        "sentry/sentry": "To be able to send SSO login attempts to Sentry"
     },
     "autoload": {
         "psr-4": {
