@@ -8,6 +8,8 @@ use Heptacom\AdminOpenAuth\KskHeptacomAdminOpenAuth;
 use League\OAuth2\Server\AuthorizationServer as LeagueAuthorizationServer;
 use League\OAuth2\Server\Grant\GrantTypeInterface;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
+use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
+use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
@@ -37,17 +39,17 @@ class AuthorizationServer extends LeagueAuthorizationServer
         $this->decorated->enableGrantType($grantType, $accessTokenTTL);
     }
 
-    public function validateAuthorizationRequest(ServerRequestInterface $request)
+    public function validateAuthorizationRequest(ServerRequestInterface $request): AuthorizationRequestInterface
     {
         return $this->decorated->validateAuthorizationRequest($request);
     }
 
-    public function completeAuthorizationRequest(AuthorizationRequest $authRequest, ResponseInterface $response)
+    public function completeAuthorizationRequest(AuthorizationRequestInterface $authRequest, ResponseInterface $response): ResponseInterface
     {
         return $this->decorated->completeAuthorizationRequest($authRequest, $response);
     }
 
-    public function respondToAccessTokenRequest(ServerRequestInterface $request, ResponseInterface $response)
+    public function respondToAccessTokenRequest(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         return $this->decorated->respondToAccessTokenRequest($request, $response);
     }
@@ -62,7 +64,7 @@ class AuthorizationServer extends LeagueAuthorizationServer
         $this->decorated->revokeRefreshTokens($revokeRefreshTokens);
     }
 
-    protected function getResponseType()
+    protected function getResponseType(): ResponseTypeInterface
     {
         return $this->decorated->getResponseType();
     }

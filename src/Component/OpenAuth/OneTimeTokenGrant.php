@@ -27,12 +27,12 @@ final class OneTimeTokenGrant extends PasswordGrant
         parent::__construct($userRepository, $refreshTokenRepository);
     }
 
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return 'heptacom_admin_open_auth_one_time_token';
     }
 
-    protected function validateUser(ServerRequestInterface $request, ClientEntityInterface $client)
+    protected function validateUser(ServerRequestInterface $request, ClientEntityInterface $client): UserEntityInterface
     {
         $otp = $this->getRequestParameter('one_time_token', $request);
 

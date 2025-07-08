@@ -14,11 +14,6 @@ use Shopware\Core\Framework\DataAbstractionLayer\FieldCollection;
 
 final class AclRoleExtension extends EntityExtension
 {
-    public function getDefinitionClass(): string
-    {
-        return AclRoleDefinition::class;
-    }
-
     public function extendFields(FieldCollection $collection): void
     {
         parent::extendFields($collection);
@@ -30,5 +25,9 @@ final class AclRoleExtension extends EntityExtension
         $collection->add(
             (new ManyToManyAssociationField('heptacomOpenAuthClients', ClientDefinition::class, ClientAclRoleDefinition::class, 'acl_role_id', 'client_id'))->addFlags(new CascadeDelete()),
         );
+    }
+    public function getEntityName(): string
+    {
+        return AclRoleDefinition::ENTITY_NAME;
     }
 }

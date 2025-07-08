@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Heptacom\AdminOpenAuth\Service\OpenAuth;
 
+use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use Shopware\Core\Framework\Api\OAuth\Client\ApiClient;
 
@@ -14,7 +15,7 @@ final readonly class OneTimeTokenClientRepository implements ClientRepositoryInt
     ) {
     }
 
-    public function getClientEntity($clientIdentifier)
+    public function getClientEntity($clientIdentifier): ?ClientEntityInterface
     {
         if ($clientIdentifier === 'administration') {
             return new ApiClient('administration', true);
@@ -23,7 +24,7 @@ final readonly class OneTimeTokenClientRepository implements ClientRepositoryInt
         return $this->decorated->getClientEntity($clientIdentifier);
     }
 
-    public function validateClient($clientIdentifier, $clientSecret, $grantType)
+    public function validateClient($clientIdentifier, $clientSecret, $grantType): bool
     {
         return $grantType === 'heptacom_admin_open_auth_one_time_token'
             || $this->decorated->validateClient($clientIdentifier, $clientSecret, $grantType);
