@@ -45,11 +45,13 @@ final class KskHeptacomAdminOpenAuth extends Plugin
         if (!$uninstallContext->keepUserData()) {
             $schemaManager = $connection->createSchemaManager();
 
+            $connection->executeStatement('SET FOREIGN_KEY_CHECKS = 0');
             foreach (self::PLUGIN_TABLES as $table) {
-                if ($schemaManager->tablesExist($table)) {
+                if ($schemaManager->tablesExist([$table])) {
                     $schemaManager->dropTable($table);
                 }
             }
+            $connection->executeStatement('SET FOREIGN_KEY_CHECKS = 1');
         }
     }
 

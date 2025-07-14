@@ -18,7 +18,7 @@ final readonly class OneTimeTokenClientRepository implements ClientRepositoryInt
     public function getClientEntity($clientIdentifier): ?ClientEntityInterface
     {
         if ($clientIdentifier === 'administration') {
-            return new ApiClient('administration', true);
+            return new ApiClient('administration', true, confidential: false);
         }
 
         return $this->decorated->getClientEntity($clientIdentifier);
