@@ -7,6 +7,7 @@ namespace Heptacom\AdminOpenAuth\Http\Route\Support;
 use Heptacom\AdminOpenAuth\Contract\Client\ClientFactoryContract;
 use Heptacom\AdminOpenAuth\Contract\RedirectBehaviour;
 use Heptacom\AdminOpenAuth\Contract\Route\Exception\RedirectReceiveException;
+use Heptacom\AdminOpenAuth\Contract\Route\Exception\RedirectReceiveInvalidStateException;
 use Heptacom\AdminOpenAuth\Contract\Route\Exception\RedirectReceiveMissingStateException;
 use Heptacom\AdminOpenAuth\Contract\User;
 use Heptacom\AdminOpenAuth\Database\ClientRuleCollection;
@@ -19,8 +20,10 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Log\LoggerInterface;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
+use Shopware\Core\Defaults;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\RangeFilter;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -34,7 +37,6 @@ class RedirectReceiveRoute
         private readonly EventDispatcherInterface $eventDispatcher,
         #[Autowire(service: LoginDefinition::ENTITY_NAME . '.repository')]
         private readonly EntityRepository $loginRepository,
-        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -45,7 +47,6 @@ class RedirectReceiveRoute
         RequestInterface $request,
         ClientEntity $client,
         RedirectBehaviour $behaviour,
-        ClientRuleCollection $rules,
         Context $context
     ): User {
         \parse_str($request->getUri()->getQuery(), $getParams);
@@ -66,8 +67,15 @@ class RedirectReceiveRoute
 
         $loginCriteria = new Criteria();
         $loginCriteria->addFilter(new EqualsFilter('state', $state));
-        /** @var LoginEntity $login */
+        $loginCriteria->addFilter(new RangeFilter('expiresAt', [
+            RangeFilter::GTE => (new \DateTime())->format(Defaults::STORAGE_DATE_TIME_FORMAT),
+        ]));
+        /** @var LoginEntity|null $login */
         $login = $this->loginRepository->search($loginCriteria, $context)->first();
+
+        if (!$login instanceof LoginEntity) {
+            throw new RedirectReceiveInvalidStateException($state);
+        }
 
         $oauthClient = $this->clientFactory->create($client->provider, $client->config);
         $user = $oauthClient->getUser($state, $code, $behaviour);

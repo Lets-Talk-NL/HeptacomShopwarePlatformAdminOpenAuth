@@ -78,7 +78,7 @@ final class ClientRedirectRoute extends AbstractController
         if (Feature::isActive(self::FEATURE_HEPTACOM_OPEN_AUTH_SSO_LOG_ATTEMPTS_TO_SENTRY) && class_exists(SentrySdk::class)) {
             withScope(function (Scope $scope) use ($request): void {
                 $scope->setContext('saml', [
-                    'response' => base64_decode($request->request->get('SAMLResponse'))
+                    'response' => base64_decode($request->request->get('SAMLResponse') ?? 'Unknown response'),
                 ]);
                 captureMessage('SSO login attempt');
             });
@@ -89,7 +89,6 @@ final class ClientRedirectRoute extends AbstractController
                 $psrHttpFactory->createRequest($request),
                 $client,
                 $this->redirectBehaviourFactory->createRedirectBehaviour($clientId, $context),
-                $client->rules,
                 $context
             );
 

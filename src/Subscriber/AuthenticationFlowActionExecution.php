@@ -27,23 +27,27 @@ class AuthenticationFlowActionExecution
     #[AsEventListener(UserRedirectReceivedEvent::class)]
     public function preAuthentication(UserRedirectReceivedEvent $event): void
     {
-        $this->executeRules(
-            $event->client->rules,
-            $event->user,
-            $event->client->getExtension('oauthClient'),
-            $event->client->config
-        );
+        $rules = $event->client->rules;
+        $oauthClient = $event->client->getExtensionOfType('oauthClient', ClientContract::class);
+
+        if ($rules === null || $oauthClient === null) {
+            return;
+        }
+
+        $this->executeRules($rules, $event->user, $oauthClient, $event->client->config);
     }
 
     #[AsEventListener(UserRedirectAuthenticationEvent::class)]
     public function postAuthentication(UserRedirectAuthenticationEvent $event): void
     {
-        $this->executeRules(
-            $event->client->rules,
-            $event->user,
-            $event->client->getExtension('oauthClient'),
-            $event->client->config
-        );
+        $rules = $event->client->rules;
+        $oauthClient = $event->client->getExtensionOfType('oauthClient', ClientContract::class);
+
+        if ($rules === null || $oauthClient === null) {
+            return;
+        }
+
+        $this->executeRules($rules, $event->user, $oauthClient, $event->client->config);
     }
 
     private function executeRules(
