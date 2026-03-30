@@ -66,8 +66,7 @@
     },
     "require-dev": {
         "shopware/administration": "*",
-        "sentry/sentry": "^4.12",
-        "letstalk/sw-ddev-plugin-config": "^1.0"
+        "sentry/sentry": "^4.12"
     },
     "suggest": {
         "ext-bcmath": "Either the bcmath or gmp extension is required for token validation. Otherwise you will run into performance issues.",
