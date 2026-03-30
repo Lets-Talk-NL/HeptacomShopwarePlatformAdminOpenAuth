@@ -79,7 +79,7 @@ class OpenIdConnectTokenVerifier
         $keys = $this->loadKeys($config);
 
         if (!$keys) {
-            // assume the key is valid, as we have no way to check it
+            // @FIXME: assume the key is valid, as we have no way to check it
             return true;
         }
 
@@ -120,6 +120,7 @@ class OpenIdConnectTokenVerifier
 
         $this->logger->debug('JWT signature successfully verified.');
 
+        // @FIXME: No check whether it has been verified AT ALL (no valid algorithm -> return true)
         return true;
     }
 
