@@ -1,5 +1,6 @@
 {% block heptacom_admin_open_auth_url_clients %}
     <mt-card
+        v-if="heptacomAdminOpenAuthClients.length > 0"
         position-identifier="heptacom-admin-open-auth-user-profile-sso"
         :title="$tc('heptacom-admin-open-auth-url-clients.title')"
         :isLoading="heptacomAdminOpenAuthLoading"
@@ -9,10 +10,10 @@
                 {% block heptacom_admin_open_auth_url_clients_cards %}
                     <sw-container rows="1fr">
                         <sw-card-section
-                            v-for="client of heptacomAdminOpenAuthClients"
+                            v-for="(client, clientIndex) of heptacomAdminOpenAuthClients"
                             :key="client.id"
                             :slim="true"
-                            divider="bottom"
+                            :divider="heptacomAdminOpenAuthClients.length - 1 !== clientIndex ? 'bottom' : ''"
                         >
                             {% block sw_profile_index_admin_open_auth_clients_cards_item %}
                                 <sw-container columns="1fr auto">
