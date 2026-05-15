@@ -1,8 +1,25 @@
 # Unreleased
 
+**Added**
+
+* Added configuration options `enableUnifiedRedirectDomain` and `unifiedRedirectDomain` to allow using one unified domain for the IdP redirect to the shop. (copied from 8.1.0)
+
+**Changed**
+
+* Changed logs to use the channel `heptacom_admin_open_auth` instead of the default channel
+
 **Fixed**
 
+* Fixed issues when using Shopware with a custom `SHOPWARE_ADMINISTRATION_PATH_NAME` (GitHub Issue #45)
+* Implement more strict validation of JWT signatures, previously received by the IdP
+* Fixed incomplete client validation
+* Fixed incomplete early verification of login expiry
+* Fixed incomplete active check in `ClientFeatureChecker`
 * Fixed OIDC provider to not emit dynamic property warnings
+
+**Removed**
+
+* Remove `ClientFeatureCheckerInterface::canUsersBecomeAdmin` as it's unused since v6.0.0
 
 # 9.0.0
 
