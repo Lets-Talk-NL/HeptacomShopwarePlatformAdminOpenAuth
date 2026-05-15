@@ -1,8 +1,49 @@
 # Unreleased
 
+**Added**
+
+* Added configuration options `enableUnifiedRedirectDomain` and `unifiedRedirectDomain` to allow using one unified domain for the IdP redirect to the shop. (copied from 8.1.0)
+
+**Changed**
+
+* Changed logs to use the channel `heptacom_admin_open_auth` instead of the default channel
+
+**Fixed**
+
+* Fixed issues when using Shopware with a custom `SHOPWARE_ADMINISTRATION_PATH_NAME` (GitHub Issue #45)
+* Implement more strict validation of JWT signatures, previously received by the IdP
+* Fixed incomplete client validation
+* Fixed incomplete early verification of login expiry
+* Fixed incomplete active check in `ClientFeatureChecker`
+* Fixed OIDC provider to not emit dynamic property warnings
+
+**Removed**
+
+* Remove `ClientFeatureCheckerInterface::canUsersBecomeAdmin` as it's unused since v6.0.0
+
+# 9.0.0
+
+**Added**
+
+* Added Shopware 6.7 compatibility with related dependencies
+
 **Fixed**
 
 * Fixed criteria using an outdated association
+
+**Removed**
+
+* Removed Shopware 6.6 compatibility
+
+# 8.1.0
+
+**Added**
+
+* Added configuration options `enableUnifiedRedirectDomain` and `unifiedRedirectDomain` to allow using one unified domain for the IdP redirect to the shop. (copied from 9.1.0)
+
+**Fixed**
+
+* Fixed issues when using Shopware with a custom `SHOPWARE_ADMINISTRATION_PATH_NAME` (GitHub Issue #45)
 
 # 8.0.0
 
@@ -24,6 +65,18 @@
 
 * Removed soft-dependency onto Shopware Storefront to allow usage in headless-only projects (GitHub Issue #37)
 
+# 7.1.1
+
+**Fixed**
+
+* Fixed issues when using Shopware with a custom `SHOPWARE_ADMINISTRATION_PATH_NAME` (GitHub Issue #45)
+
+# 7.1.0
+
+**Added**
+
+* Added configuration options `enableUnifiedRedirectDomain` and `unifiedRedirectDomain` to allow using one unified domain for the IdP redirect to the shop. (copied from 9.1.0)
+
 # 7.0.2
 
 **Changed**
@@ -33,7 +86,7 @@
 **Fixed**
 
 * Fixed a bug causing the login process to terminate in some cases, after the redirect from the identity provider back to Shopware (GitHub Issues #26, #28, #31)
-* Fixed broken installations when after execution of `database:migrate-destructive`, applied from [6.0.4](#604) and [6.0.5](#605) (GitHub Issue #36) 
+* Fixed broken installations when after execution of `database:migrate-destructive`, applied from [6.0.4](#604) and [6.0.5](#605) (GitHub Issue #36)
 
 # 7.0.1
 
@@ -259,7 +312,7 @@
 * Fix bug on ZIP-Installations where external dependencies were not loaded
 * RedirectURL is now generated automatically to simplify domain changes
 * Extract OpenAuth code contracts in new repository heptacom/open-auth
-* Add method in ClientContract to authorize API requests 
+* Add method in ClientContract to authorize API requests
 * Extract ClientFactoryContract from ClientLoader
 * Move ClientProviderRepositoryInterface into Heptacom\OpenAuth\ClientProvider\Contract namespace and used Contract pattern
 * Move ClientProviderInterface into Heptacom\OpenAuth\ClientProvider\Contract namespace and used Contract pattern
@@ -286,7 +339,7 @@
 # 1.0.1
 
 * Fix bug where migrations were deleted on uninstallation
-* Fix login bug as wrong DAL field keys were used 
+* Fix login bug as wrong DAL field keys were used
 
 # 1.0.0
 

@@ -1,5 +1,29 @@
 # Unreleased
 
+# 9.0.0
+
+**Hinzugefügt**
+
+* Kompatibilität mit Shopware 6.7 und zugehörigen Abhängigkeiten hinzugefügt
+
+**Behoben**
+
+* Verwendung einer veralteten Assoziation beim Login behoben
+
+**Entfernt**
+
+* Shopware 6.6 Kompatibilität wurde entfernt
+
+# 8.1.0
+
+**Hinzugefügt**
+
+* Einstellungen `enableUnifiedRedirectDomain` und `unifiedRedirectDomain` hinzugefügt zum Einrichten einer einheitlichen Rücksprungadresse für Shops mit mehreren validen Basis-URLs für Logins für weiterhin einzelne Adresse im IdP zur Freischaltung (Übernahme aus Version 9.1.0)
+
+**Behoben**
+
+* Fehler behoben, der zu Fehlern führte, wenn ein individueller `SHOPWARE_ADMINISTRATION_PATH_NAME` verwendet wird (GitHub Issue #45)
+
 # 8.0.0
 
 **Hinzugefügt**
@@ -19,6 +43,18 @@
 **Behoben**
 
 * Abhängigkeit zur Shopware Standard Storefront entfernt für Unterstützung von Projekten, die ausschließlich Headless-Verkaufskanäle vorsehen (GitHub Issue #37)
+
+# 7.1.1
+
+**Behoben**
+
+* Fehler behoben, der zu Fehlern führte, wenn ein individueller `SHOPWARE_ADMINISTRATION_PATH_NAME` verwendet wird (GitHub Issue #45)
+
+# 7.1.0
+
+**Hinzugefügt**
+
+* Einstellungen `enableUnifiedRedirectDomain` und `unifiedRedirectDomain` hinzugefügt zum Einrichten einer einheitlichen Rücksprungadresse für Shops mit mehreren validen Basis-URLs für Logins für weiterhin einzelne Adresse im IdP zur Freischaltung (Übernahme aus Version 9.1.0)
 
 # 7.0.2
 
@@ -255,7 +291,7 @@
 * Fehler bei ZIP-Installation behoben, der externe Komponenten nicht korrekt geladen hat
 * Rücksende URL wird automatisch generiert um Domain-Umzüge zu vereinfachen
 * OpenAuth Codeverträge in eigenes Repository ausgelagert heptacom/open-auth
-* Methode zum ClientContract hinzugefügt zum Autorisieren von API Anfragen 
+* Methode zum ClientContract hinzugefügt zum Autorisieren von API Anfragen
 * ClientFactoryContract aus ClientLoader extrahiert
 * ClientProviderRepositoryInterface in den Heptacom\OpenAuth\ClientProvider\Contract Namensraum als Contract überführt
 * ClientProviderInterface in den Heptacom\OpenAuth\ClientProvider\Contract Namensraum als Contract überführt
