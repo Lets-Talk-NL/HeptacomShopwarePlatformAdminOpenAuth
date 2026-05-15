@@ -38,6 +38,7 @@
 {% endblock %}
 `});var F={};a(F,{default:()=>kt});var Li,h,P,kt,R=o(()=>{x();S();({Component:Li,Context:h}=Shopware),P="HeptacomAdminOpenAuthConfirmState",kt={template:$,inject:["loginService","repositoryFactory"],props:{divider:{type:Boolean,default:!0}},data(){return{loading:!0,clients:[],waitingForConfirmation:!1,confirmationClient:null,popupsAreBlocked:null}},computed:{heptacomAdminOpenAuthClientsRepository(){return this.repositoryFactory.create("heptacom_admin_open_auth_client")},httpClient(){return this.heptacomAdminOpenAuthClientsRepository.httpClient},sectionDivider(){return this.divider?"bottom":""}},created(){this.createdComponent()},methods:{createdComponent(){this.loadClients()},loadClients(){this.loading=!0,this.clients=[],this.getConnectedClients().then(e=>{this.clients=e}).finally(()=>{this.loading=!1})},startAuthFlow(e){let t=this;this.waitingForConfirmation=!0,this.popupsAreBlocked=null,this.confirmationClient=e,localStorage.removeItem(P),this.getConfirmRedirectUrl(e.id).then(i=>{let n=Math.floor((screen.width-600)/2),r=Math.floor((screen.height-600)/2),s=window.open(i,this.$t("heptacom-admin-open-auth-user-confirm-login.confirmWith",{clientName:e.name}),`location=0,status=0,width=600,height=600, top=${r}, left=${n}`),d=null,_=window.setTimeout(()=>{(!s||s.closed||typeof s.closed>"u")&&(t.popupsAreBlocked=!0,t.waitingForConfirmation=!1,d&&window.clearInterval(d))},1200);try{s.focus(),t.popupsAreBlocked=!1}catch{t.popupsAreBlocked=!0,t.waitingForConfirmation=!1,window.clearTimeout(_);return}d=window.setInterval(()=>{if(!this.waitingForConfirmation){window.clearInterval(d),window.clearTimeout(_),this.popupsAreBlocked=!1,s.close();return}if(s.closed){window.clearInterval(d),window.clearTimeout(_),this.popupsAreBlocked=!1,this.waitingForConfirmation=!1;let g=localStorage.getItem(P);g&&this.verifyByState(JSON.parse(g).state)}},1e3)})},abortAuthFlow(){this.confirmationClient=null,this.waitingForConfirmation=!1},getConnectedClients(){let e=this.heptacomAdminOpenAuthClientsRepository.buildHeaders(h.api);return this.httpClient.get("/_admin/open-auth/client/list",{headers:e}).then(t=>t.data.data.filter(i=>i.connected))},getConfirmRedirectUrl(e){let t=this.heptacomAdminOpenAuthClientsRepository.buildHeaders(h.api);return this.httpClient.get(`/_admin/open-auth/${e}/confirm`,{headers:t}).then(i=>i.data.target)},verifyByState(e){this.httpClient.post("/oauth/token",{grant_type:"heptacom_admin_open_auth_one_time_token",client_id:"administration",scope:"user-verified",one_time_token:e},{baseURL:h.api.apiPath}).then(t=>{let i={...h.api};i.authToken.access=t.data.access_token;let n={...this.loginService.getBearerAuthentication(),access:i.authToken.access};this.loginService.setBearerAuthentication(n),this.$emit("confirm",i)})}}}});var q,U=o(()=>{q=`{% block heptacom_admin_open_auth_url_clients %}
     <mt-card
+        v-if="heptacomAdminOpenAuthClients.length > 0"
         position-identifier="heptacom-admin-open-auth-user-profile-sso"
         :title="$tc('heptacom-admin-open-auth-url-clients.title')"
         :isLoading="heptacomAdminOpenAuthLoading"
@@ -47,10 +48,10 @@
                 {% block heptacom_admin_open_auth_url_clients_cards %}
                     <sw-container rows="1fr">
                         <sw-card-section
-                            v-for="client of heptacomAdminOpenAuthClients"
+                            v-for="(client, clientIndex) of heptacomAdminOpenAuthClients"
                             :key="client.id"
                             :slim="true"
-                            divider="bottom"
+                            :divider="heptacomAdminOpenAuthClients.length - 1 !== clientIndex ? 'bottom' : ''"
                         >
                             {% block sw_profile_index_admin_open_auth_clients_cards_item %}
                                 <sw-container columns="1fr auto">
@@ -91,12 +92,16 @@
                                         <template
                                             v-if="client.connected"
                                         >
-                                            {{ $t('heptacom-admin-open-auth-url-clients.userKeys.states.connected') }}
+                                            <sw-label variant="success" size="medium" appearance="pill">
+                                                {{ $t('heptacom-admin-open-auth-url-clients.userKeys.states.connected') }}
+                                            </sw-label>
                                         </template>
                                         <template
                                             v-else
                                         >
-                                            {{ $t('heptacom-admin-open-auth-url-clients.userKeys.states.notConnected') }}
+                                            <sw-label variant="info" size="medium" appearance="pill">
+                                                {{ $t('heptacom-admin-open-auth-url-clients.userKeys.states.notConnected') }}
+                                            </sw-label>
                                         </template>
                                     </template>
                                     {% endblock %}
