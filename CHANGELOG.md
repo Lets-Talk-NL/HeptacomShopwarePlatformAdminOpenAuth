@@ -11,6 +11,7 @@
 
 **Fixed**
 
+* Fixed shopware/core version constraint to disallow major updates. See [tinect's contribution on GitHub](https://github.com/HEPTACOM/HeptacomShopwarePlatformAdminOpenAuth/pull/44)
 * Fixed issues when using Shopware with a custom `SHOPWARE_ADMINISTRATION_PATH_NAME` (GitHub Issue #45)
 * Implement more strict validation of JWT signatures, previously received by the IdP
 * Fixed incomplete client validation
