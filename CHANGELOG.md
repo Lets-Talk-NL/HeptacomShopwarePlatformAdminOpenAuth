@@ -15,6 +15,7 @@
 * Fixed incomplete client validation
 * Fixed incomplete early verification of login expiry
 * Fixed incomplete active check in `ClientFeatureChecker`
+* Fixed OIDC provider to not emit dynamic property warnings
 
 **Removed**
 
