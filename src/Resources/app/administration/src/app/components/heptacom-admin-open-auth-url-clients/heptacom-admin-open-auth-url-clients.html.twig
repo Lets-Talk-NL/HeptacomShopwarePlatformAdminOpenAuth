@@ -54,12 +54,16 @@
                                         <template
                                             v-if="client.connected"
                                         >
-                                            {{ $t('heptacom-admin-open-auth-url-clients.userKeys.states.connected') }}
+                                            <sw-label variant="success" size="medium" appearance="pill">
+                                                {{ $t('heptacom-admin-open-auth-url-clients.userKeys.states.connected') }}
+                                            </sw-label>
                                         </template>
                                         <template
                                             v-else
                                         >
-                                            {{ $t('heptacom-admin-open-auth-url-clients.userKeys.states.notConnected') }}
+                                            <sw-label variant="info" size="medium" appearance="pill">
+                                                {{ $t('heptacom-admin-open-auth-url-clients.userKeys.states.notConnected') }}
+                                            </sw-label>
                                         </template>
                                     </template>
                                     {% endblock %}
