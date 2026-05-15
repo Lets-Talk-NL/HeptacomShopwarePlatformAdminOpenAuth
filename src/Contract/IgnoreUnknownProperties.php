@@ -22,6 +22,4 @@ trait IgnoreUnknownProperties
 
         return $this->baseAssign($options);
     }
-
-
 }
