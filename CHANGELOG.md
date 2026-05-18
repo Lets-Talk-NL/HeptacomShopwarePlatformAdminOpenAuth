@@ -3,6 +3,7 @@
 **Added**
 
 * Added configuration options `enableUnifiedRedirectDomain` and `unifiedRedirectDomain` to allow using one unified domain for the IdP redirect to the shop. (copied from 8.1.0)
+* Added card to user detail page in administration to show the SSO state of a user. See [tinect's contribution on GitHub](https://github.com/HEPTACOM/HeptacomShopwarePlatformAdminOpenAuth/pull/47)
 
 **Changed**
 
