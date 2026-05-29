@@ -11,6 +11,7 @@ use Heptacom\AdminOpenAuth\Database\ClientEntity;
 use Heptacom\AdminOpenAuth\Http\Route\Support\BeforeUserRedirectEvent;
 use Heptacom\AdminOpenAuth\Http\Route\Support\RedirectReceiveRoute;
 use Heptacom\AdminOpenAuth\Http\Route\Support\UserRedirectAuthenticationEvent;
+use Heptacom\AdminOpenAuth\KskHeptacomAdminOpenAuth;
 use Heptacom\AdminOpenAuth\Service\StateResolver;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Sentry\SentrySdk;
@@ -21,6 +22,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
 use Shopware\Core\Framework\Feature;
 use Shopware\Core\Framework\Struct\ArrayStruct;
+use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -48,11 +50,12 @@ final class ClientRedirectRoute extends AbstractController
         private readonly RedirectBehaviourFactoryInterface $redirectBehaviourFactory,
         private readonly StateResolver $stateResolver,
         private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly SystemConfigService $systemConfigService,
     ) {
     }
 
     #[Route(
-        path: '/admin/open-auth/{clientId}/redirect',
+        path: '/%shopware_administration.path_name%/open-auth/{clientId}/redirect',
         name: 'administration.heptacom.admin_open_auth.login',
         defaults: [
             'auth_required' => false,
@@ -120,7 +123,7 @@ final class ClientRedirectRoute extends AbstractController
                              [],
                              UrlGeneratorInterface::ABSOLUTE_URL
                          ));
-        $targetUrl = $this->enrichRedirectUrl($targetUrl, $requestState);
+        $targetUrl = $this->enrichRedirectUrl($targetUrl, $statePayload['originUrl'] ?? null, $requestState);
 
         $this->eventDispatcher->dispatch(new BeforeUserRedirectEvent($userId, $user, $clientId, $statePayload));
 
@@ -128,7 +131,7 @@ final class ClientRedirectRoute extends AbstractController
         return new RedirectResponse($targetUrl, Response::HTTP_SEE_OTHER);
     }
 
-    protected function enrichRedirectUrl(string $targetUrl, string $requestState): string
+    protected function enrichRedirectUrl(string $targetUrl, ?string $originUrl, string $requestState): string
     {
         $targetUrlParts = [
             ...[
@@ -139,6 +142,32 @@ final class ClientRedirectRoute extends AbstractController
             ...\parse_url($targetUrl),
         ];
 
+        // merge origin and target url
+        if ($this->systemConfigService->getBool(KskHeptacomAdminOpenAuth::CONFIG_ENABLE_UNIFIED_REDIRECT_DOMAIN)) {
+            $originUrlParts = \parse_url($originUrl ?? '');
+
+            if (\array_key_exists('scheme', $originUrlParts) && \array_key_exists('host', $originUrlParts)) {
+                $targetUrlParts['scheme'] = $originUrlParts['scheme'];
+                $targetUrlParts['host'] = $originUrlParts['host'];
+            }
+
+            if (\array_key_exists('port', $originUrlParts)) {
+                $targetUrlParts['port'] = $originUrlParts['port'];
+            }
+
+            if (\array_key_exists('path', $originUrlParts) && $originUrlParts['path'] !== '/') {
+                $prefix = \rtrim($originUrlParts['path'], '/');
+                $targetUrlPath = \ltrim($targetUrlParts['path'], '/');
+
+                if ($targetUrlPath === '') {
+                    $targetUrlParts['path'] = $prefix;
+                } else {
+                    $targetUrlParts['path'] = $prefix . '/' . $targetUrlPath;
+                }
+            }
+        }
+
+        // build target url
         $targetUrl = '';
 
         if (\array_key_exists('scheme', $targetUrlParts) && \array_key_exists('host', $targetUrlParts)) {
