@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace Heptacom\AdminOpenAuth;
 
 use Doctrine\DBAL\Connection;
-use Heptacom\AdminOpenAuth\DependencyInjection\KskHeptacomAdminOpenAuthExtension;
 use Shopware\Core\Framework\Plugin;
 use Shopware\Core\Framework\Plugin\Context\UninstallContext;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 
 final class KskHeptacomAdminOpenAuth extends Plugin
 {
@@ -62,10 +60,5 @@ final class KskHeptacomAdminOpenAuth extends Plugin
                 }
             }
         }
-    }
-
-    public function getContainerExtension(): ?ExtensionInterface
-    {
-        return new KskHeptacomAdminOpenAuthExtension();
     }
 }
