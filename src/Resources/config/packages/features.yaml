@@ -1,0 +1,8 @@
+shopware:
+  feature:
+    flags:
+      - name: !php/const \Heptacom\AdminOpenAuth\Http\Route\ClientRedirectRoute::FEATURE_HEPTACOM_OPEN_AUTH_SSO_LOG_ATTEMPTS_TO_SENTRY
+        default: false
+        major: true
+        toggleable: false
+        description: 'Log single sign-on attempts to Sentry'

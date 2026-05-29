@@ -5,14 +5,16 @@ declare(strict_types=1);
 namespace Heptacom\AdminOpenAuth;
 
 use Doctrine\DBAL\Connection;
-use Heptacom\AdminOpenAuth\DependencyInjection\KskHeptacomAdminOpenAuthExtension;
 use Shopware\Core\Framework\Plugin;
 use Shopware\Core\Framework\Plugin\Context\UninstallContext;
-use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class KskHeptacomAdminOpenAuth extends Plugin
 {
     public const CONFIG_DENY_PASSWORD_LOGIN = 'KskHeptacomAdminOpenAuth.config.denyPasswordLogin';
+
+    public const CONFIG_ENABLE_UNIFIED_REDIRECT_DOMAIN = 'KskHeptacomAdminOpenAuth.config.enableUnifiedRedirectDomain';
+    public const CONFIG_UNIFIED_REDIRECT_DOMAIN = 'KskHeptacomAdminOpenAuth.config.unifiedRedirectDomain';
 
     /**
      * All plugin tables that should be removed on uninstall.
@@ -35,6 +37,13 @@ final class KskHeptacomAdminOpenAuth extends Plugin
         return true;
     }
 
+    public function build(ContainerBuilder $container): void
+    {
+        parent::build($container);
+
+        $this->buildDefaultConfig($container);
+    }
+
     public function uninstall(UninstallContext $uninstallContext): void
     {
         parent::uninstall($uninstallContext);
@@ -51,10 +60,5 @@ final class KskHeptacomAdminOpenAuth extends Plugin
                 }
             }
         }
-    }
-
-    public function getContainerExtension(): ?ExtensionInterface
-    {
-        return new KskHeptacomAdminOpenAuthExtension();
     }
 }
