@@ -14,6 +14,10 @@ use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Log\LoggerInterface;
+use Sentry\SentrySdk;
+use Sentry\State\Scope;
+use function Sentry\captureException;
+use function Sentry\withScope;
 
 class Saml2ServiceProviderService
 {
@@ -172,19 +176,34 @@ class Saml2ServiceProviderService
     {
         $this->prepareSuperGlobals($samlResponse, $relayState);
 
+        $authException = null;
         try {
             $auth = new Auth($this->config->getOneLoginSettings());
             $auth->processResponse(self::ID_PREFIX . $relayState);
             $errors = $auth->getErrors();
 
             if (\count($errors) > 0) {
+                $authException = $auth->getLastErrorException();
                 throw new OneLoginSaml2Error('Invalid response: ' . \implode(', ', $errors));
             }
 
             return $auth;
         } catch (\Exception $e) {
             $message = \sprintf('Could not verify SAMLResponse: %s', $e->getMessage());
-            $this->logger->error($message, $e->getTrace());
+            $logMessage = $message;
+            if ($authException !== null) {
+                $logMessage .= ' with response exception: ' . $authException->getMessage();
+            }
+            $this->logger->error($logMessage, $e->getTrace());
+
+            if (class_exists(SentrySdk::class)) {
+                withScope(function (Scope $scope) use ($e, $authException): void {
+                    if ($authException !== null) {
+                        $scope->setContext('saml', ['authError' => $authException->getMessage()]);
+                    }
+                    captureException($authException ?? $e);
+                });
+            }
 
             throw new Saml2Exception($message, $e);
         } finally {
