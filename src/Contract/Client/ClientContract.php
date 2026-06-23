@@ -18,7 +18,7 @@ abstract class ClientContract extends Struct
     abstract public function getUser(string $state, string $code, RedirectBehaviour $behaviour): User;
 
     /**
-     * @deprecated Implement {@see RefreshTokenContract} instead.
+     * @deprecated implement {@see RefreshTokenContract} instead
      */
     public function refreshToken(string $refreshToken): TokenPair
     {
@@ -26,7 +26,7 @@ abstract class ClientContract extends Struct
     }
 
     /**
-     * @deprecated Implement {@see RequestAuthorizationContract} instead.
+     * @deprecated implement {@see RequestAuthorizationContract} instead
      */
     public function authorizeRequest(RequestInterface $request, TokenPair $token): RequestInterface
     {
