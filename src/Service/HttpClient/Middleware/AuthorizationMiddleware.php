@@ -8,6 +8,8 @@ use Heptacom\AdminOpenAuth\Contract\Client\ClientContract;
 use Heptacom\AdminOpenAuth\Contract\Client\RefreshTokenContract;
 use Heptacom\AdminOpenAuth\Contract\TokenPair;
 use Heptacom\AdminOpenAuth\Exception\ClientFeatureNotSupportedException;
+use Heptacom\AdminOpenAuth\Exception\TokenExpiredNoRefreshTokenException;
+use Heptacom\AdminOpenAuth\Exception\TokenNotFoundException;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -24,19 +26,18 @@ abstract class AuthorizationMiddleware implements HttpClientMiddlewareInterface
         $token = $this->getToken();
 
         if (!$token instanceof TokenPair) {
-            throw new \Exception('token does not exist'); // todo: custom exception
+            throw new TokenNotFoundException(1748643467);
         }
 
         if ($this->needsRefresh($token)) {
             if ($token->refreshToken === null) {
-                throw new \Exception('Token needs refresh, but no refresh token is available.'); // todo: custom exception
+                throw new TokenExpiredNoRefreshTokenException(1748643469);
             }
 
             if ($this->client instanceof RefreshTokenContract) {
                 $token = $this->client->refreshToken($token->refreshToken);
                 $this->storeRefreshedToken($token);
             } else {
-                // todo: check if to use a different exception
                 throw new ClientFeatureNotSupportedException($this->client::class, RefreshTokenContract::class, 1748643468);
             }
         }

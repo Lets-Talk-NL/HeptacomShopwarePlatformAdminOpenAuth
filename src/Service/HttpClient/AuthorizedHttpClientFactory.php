@@ -63,7 +63,9 @@ final class AuthorizedHttpClientFactory
 
         $middleware = new ClientAuthorizationMiddleware($client, $clientId, $scopes, $this->cache);
 
-        \sort($scopes);
+        if ($scopes !== null) {
+            \sort($scopes);
+        }
 
         return $this->getHttpClient(
             $this->getHttpClientIdentifier('client', $clientId, ['scopes' => $scopes]),

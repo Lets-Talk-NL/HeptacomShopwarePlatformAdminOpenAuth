@@ -85,7 +85,11 @@ class AuthenticationFlowActionExecution
 
         try {
             return $this->httpClientFactory->forToken($userToken, $client);
-        } catch (ClientFeatureNotSupportedException) {
+        } catch (ClientFeatureNotSupportedException $e) {
+            $this->logger->warning('Client does not support request authorization, HTTP client will not be available for rules.', [
+                'exception' => $e,
+            ]);
+
             return null;
         }
     }
