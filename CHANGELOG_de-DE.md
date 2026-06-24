@@ -1,5 +1,9 @@
 # Unreleased
 
+**Behoben**
+
+* Plugin-Startfehler auf Shopware 6.7.11 behoben, der dadurch entstand, dass `McpAuthenticationListener` das dekorierte `OneTimeTokenClientRepository` anstelle des erwarteten konkreten `ClientRepository` erhielt (GitHub Issue #56)
+
 # 9.0.0
 
 **Hinzugefügt**
