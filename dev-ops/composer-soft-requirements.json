@@ -33,6 +33,8 @@
         "Symfony\\Component\\Routing\\RequestContext",
         "Symfony\\Component\\Routing\\RouterInterface",
         "Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface",
+        "Symfony\\Contracts\\Cache\\CacheInterface",
+        "Symfony\\Contracts\\Cache\\ItemInterface",
         "Twig\\Extension\\AbstractExtension",
         "Twig\\TwigFunction"
     ],

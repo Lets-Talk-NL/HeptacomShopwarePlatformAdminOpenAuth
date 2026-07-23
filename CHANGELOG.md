@@ -1,12 +1,10 @@
 # Unreleased
 
-**Fixed**
-
-
 **Added**
 
 * Added configuration options `enableUnifiedRedirectDomain` and `unifiedRedirectDomain` to allow using one unified domain for the IdP redirect to the shop. (copied from 8.1.0)
 * Added card to user detail page in administration to show the SSO state of a user. See [tinect's contribution on GitHub](https://github.com/HEPTACOM/HeptacomShopwarePlatformAdminOpenAuth/pull/47)
+* Added `AuthorizedHttpClientFactory` for creating authorized, PSR-18 compatible HTTP clients using the user's access token or the configured client credentials
 
 **Changed**
 
@@ -22,6 +20,7 @@
 * Fixed incomplete early verification of login expiry
 * Fixed incomplete active check in `ClientFeatureChecker`
 * Fixed OIDC provider to not emit dynamic property warnings
+* Store user tokens only if an access token exists. Prior the refresh token was required.
 
 **Removed**
 
