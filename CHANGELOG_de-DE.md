@@ -1,5 +1,9 @@
 # Unreleased
 
+**Behoben**
+
+* `TypeError` bei der Ausführung der Login-Regeln behoben, wenn ein Client keine geladene Regel-Assoziation oder keine `oauthClient`-Erweiterung besitzt
+
 # 9.1.0
 
 **Hinzugefügt**

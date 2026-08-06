@@ -1,5 +1,9 @@
 # Unreleased
 
+**Fixed**
+
+* Fixed `TypeError` in the login rule execution when a client has no rule association loaded or no `oauthClient` extension set
+
 # 9.1.0
 
 **Added**
