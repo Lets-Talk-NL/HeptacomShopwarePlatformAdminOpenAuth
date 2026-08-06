@@ -1,5 +1,11 @@
 # Unreleased
 
+**Behoben**
+
+* `redirectTo`-Validierung in der Remote-Login-Route behoben, sodass protokollrelative URLs ebenfalls abgelehnt werden
+* `StateResolver` gibt die Payload eines bereits abgelaufenen Logins nicht mehr zurück
+* Die Redirect-Route akzeptiert keinen abgelaufenen oder unbekannten Login-State mehr, sondern wirft `RedirectReceiveInvalidStateException`
+
 # 9.1.0
 
 **Hinzugefügt**

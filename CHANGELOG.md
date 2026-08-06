@@ -1,5 +1,11 @@
 # Unreleased
 
+**Fixed**
+
+* Fixed `redirectTo` validation in the remote login route to also reject protocol-relative urls
+* Fixed `StateResolver` returning the payload of an already expired login
+* Fixed the redirect route accepting an expired or unknown login state, it now throws `RedirectReceiveInvalidStateException`
+
 # 9.1.0
 
 **Added**
