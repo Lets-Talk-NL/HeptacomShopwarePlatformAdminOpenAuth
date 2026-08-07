@@ -1,5 +1,10 @@
 # Unreleased
 
+**Added**
+
+* Added event `UserRedirectCompletedEvent` to react to a completed login and to change the url the user is redirected to
+* Added `ClientLoaderInterface::loadFromCriteria` to load a client by criteria instead of by id only, throwing the new `LoadClientCriteriaNotFoundException` when nothing matches
+
 # 9.1.0
 
 **Added**

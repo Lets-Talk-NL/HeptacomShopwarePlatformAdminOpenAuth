@@ -1,5 +1,10 @@
 # Unreleased
 
+**Hinzugefügt**
+
+* Neues Event `UserRedirectCompletedEvent` hinzugefügt um auf einen abgeschlossenen Login zu reagieren und die Ziel-URL der Weiterleitung zu ändern
+* Neue Methode `ClientLoaderInterface::loadFromCriteria` hinzugefügt um einen Client per Criteria statt nur per ID zu laden, mit der neuen `LoadClientCriteriaNotFoundException` wenn nichts gefunden wird
+
 # 9.1.0
 
 **Hinzugefügt**

@@ -363,6 +363,44 @@ In case you want to use different settings, you can decorate the `heptacom.admin
 
 Please note that some settings of your HTTP client (like adding default headers) could lead to unwanted side effects, as the authorized HTTP client is used by this plugin as well.
 
+## Reacting to a completed login
+
+[`UserRedirectCompletedEvent`](src/Http/Route/Support/UserRedirectCompletedEvent.php) is dispatched once the identity provider's redirect has been processed, the Shopware user is resolved and the target url is known — right before the user is sent there.
+
+It carries the resolved `userId`, the identity provider's `user`, the `client` the login went through, the payload the login state was created with, and a mutable `targetUrl`. Change `targetUrl` to send the user somewhere other than the administration.
+
+```php
+<?php declare(strict_types=1);
+
+namespace Swag\Example\Subscriber;
+
+use Heptacom\AdminOpenAuth\Http\Route\Support\UserRedirectCompletedEvent;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+
+class ExampleRedirectSubscriber
+{
+    #[AsEventListener]
+    public function __invoke(UserRedirectCompletedEvent $event): void
+    {
+        if (($event->statePayload['portal'] ?? null) === 'employee') {
+            $event->targetUrl = 'https://example.com/employee/dashboard';
+        }
+    }
+}
+```
+
+## Loading a client with additional constraints
+
+[`ClientLoaderInterface::load()`](src/Contract/ClientLoaderInterface.php) resolves a client by id alone. `loadFromCriteria()` takes a `Criteria` instead, so you can require the client to also be active, or to be available for a specific sales channel, in the same query.
+
+```php
+$criteria = new Criteria([$clientId]);
+$criteria->addFilter(new EqualsFilter('active', true));
+
+// throws LoadClientCriteriaNotFoundException when nothing matches
+$client = $this->clientLoader->loadFromCriteria($criteria, $context);
+```
+
 ## Storefront login
 
 You want to use this plugin to allow your customers to login using SSO?
