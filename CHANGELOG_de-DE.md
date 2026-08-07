@@ -1,5 +1,10 @@
 # Unreleased
 
+**Geändert**
+
+* SAML2-Logs übergeben nun die Exception als Log-Kontext statt ihres Stacktraces, damit Monitoring-Integrationen sie auswerten können
+* Bei der Prüfung der SAMLResponse wird zusätzlich der Response-Fehler des Identity Providers protokolliert, der die Ursache der fehlgeschlagenen Prüfung benennt
+
 # 9.1.0
 
 **Hinzugefügt**

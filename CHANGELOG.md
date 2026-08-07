@@ -1,5 +1,10 @@
 # Unreleased
 
+**Changed**
+
+* Changed SAML2 logs to pass the exception as log context instead of its stack trace, so monitoring integrations can pick it up
+* Changed the SAMLResponse verification to also log the response error of the identity provider, which names the cause behind the failed check
+
 # 9.1.0
 
 **Added**
